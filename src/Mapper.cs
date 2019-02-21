@@ -64,25 +64,13 @@ namespace DBus
 			foreach (Type ifType in type.GetInterfaces ()) {
 				if (!IsPublic (ifType))
 					continue;
-				foreach (MemberInfo mi in WalkInterfaceHierarchy (ifType))
+				foreach (MemberInfo mi in GetDeclaredPublicMembers (ifType))
 					yield return new KeyValuePair<Type, MemberInfo> (ifType, mi);
 			}
 
 			if (IsPublic (type))
 				foreach (MemberInfo mi in GetDeclaredPublicMembers (type))
 					yield return new KeyValuePair<Type, MemberInfo> (type, mi);
-		}
-
-		static IEnumerable<MemberInfo> WalkInterfaceHierarchy (Type iface)
-		{
-			foreach (MemberInfo mi in GetDeclaredPublicMembers (iface))
-				yield return mi;
-
-			// We recurse to get the method the interface inherited from other interface
-			var internalIfaces = iface.GetInterfaces ();
-			foreach (var internalIface in internalIfaces)
-				foreach (var mi in WalkInterfaceHierarchy (internalIface))
-					yield return mi;
 		}
 
 		static IEnumerable<MemberInfo> GetDeclaredPublicMembers (Type type)
