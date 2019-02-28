@@ -7,7 +7,7 @@ using System;
 
 namespace DBus
 {
-	class BusException : Exception
+	public class BusException : Exception
 	{
 		public BusException (string errorName, string errorMessage)
 		{
