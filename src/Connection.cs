@@ -240,7 +240,7 @@ namespace DBus
 		}
 
 		//temporary hack
-		internal void DispatchSignals ()
+		public void DispatchSignals ()
 		{
 			lock (inbound) {
 				while (inbound.Count != 0) {
@@ -257,7 +257,7 @@ namespace DBus
 		// This probably should return a bool to indicate when the connection is closed
 		public void Iterate ()
 		{
-			Message msg = transport.ReadMessage ();
+			Message msg = ReadMessage ();
 
 			// Only way to indicate to the caller that the connection is closed
 			if (msg == null)
@@ -267,7 +267,12 @@ namespace DBus
 			DispatchSignals ();
 		}
 
-		internal virtual void HandleMessage (Message msg)
+		public Message ReadMessage ()
+		{
+			return transport.ReadMessage ();
+		}
+
+		public virtual void HandleMessage (Message msg)
 		{
 			if (msg == null)
 				return;

@@ -38,7 +38,7 @@ namespace DBus.Protocol
 
 				if (Thread.CurrentThread == conn.mainThread) {
 					while (reply == null) {
-						var msg = conn.Transport.ReadMessage ();
+						var msg = conn.ReadMessage ();
 						if (msg == null)
 							throw new Exception ("Connection closed while waiting for reply");
 						conn.HandleMessage (msg);
