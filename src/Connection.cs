@@ -254,9 +254,14 @@ namespace DBus
 			}
 		}
 
+		// This probably should return a bool to indicate when the connection is closed
 		public void Iterate ()
 		{
 			Message msg = transport.ReadMessage ();
+
+			// Only way to indicate to the caller that the connection is closed
+			if (msg == null)
+				throw new Exception ("Connection closed");
 
 			HandleMessage (msg);
 			DispatchSignals ();

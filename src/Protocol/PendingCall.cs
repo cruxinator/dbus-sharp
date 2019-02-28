@@ -37,8 +37,12 @@ namespace DBus.Protocol
 					return reply;
 
 				if (Thread.CurrentThread == conn.mainThread) {
-					while (reply == null)
-						conn.HandleMessage (conn.Transport.ReadMessage ());
+					while (reply == null) {
+						var msg = conn.Transport.ReadMessage ();
+						if (msg == null)
+							throw new Exception ("Connection closed while waiting for reply");
+						conn.HandleMessage (msg);
+					}
 
 					completedSync = true;
 
