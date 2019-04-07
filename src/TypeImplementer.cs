@@ -18,6 +18,7 @@ namespace DBus
 		AssemblyBuilder asmB;
 		ModuleBuilder modB;
 		static readonly object getImplLock = new Object ();
+		static readonly object newImplLock = new Object ();
 
 		Dictionary<Type,Type> map = new Dictionary<Type,Type> ();
 
@@ -60,6 +61,14 @@ namespace DBus
 				if (map.TryGetValue (declType, out retT))
 					return retT;
 
+			// Mono (4.6.2) doesn't seem to like it when the same type is defined twice at the same time
+			lock (newImplLock) {
+
+			// Check again to avoid redefining the same type
+			lock (getImplLock)
+				if (map.TryGetValue (declType, out retT))
+					return retT;
+
 			string proxyName = declType.FullName + "Proxy";
 
 			Type parentType;
@@ -83,6 +92,8 @@ namespace DBus
 				map[declType] = retT;
 
 			return retT;
+
+			}
 		}
 
 		static void Implement (TypeBuilder typeB, Type iface, string interfaceName)
