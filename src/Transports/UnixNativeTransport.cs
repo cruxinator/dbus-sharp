@@ -90,11 +90,9 @@ namespace DBus.Transports
 			return client;
 		}
 
-		internal unsafe override int Read (byte[] buffer, int offset, int count, UnixFDArray fdArray)
+		// Might return short reads
+		unsafe int ReadShort (byte[] buffer, int offset, int count, UnixFDArray fdArray)
 		{
-			if (!Connection.UnixFDSupported || fdArray == null)
-				return base.Read (buffer, offset, count, fdArray);
-
 			if (count < 0 || offset < 0 || count + offset < count || count + offset > buffer.Length)
 				throw new ArgumentException ();
 			
@@ -131,6 +129,25 @@ namespace DBus.Transports
 					return read;
 				}
 			}
+		}
+
+		internal override int Read (byte[] buffer, int offset, int length, UnixFDArray fdArray)
+		{
+			if (!Connection.UnixFDSupported || fdArray == null)
+				return base.Read (buffer, offset, length, fdArray);
+
+			int read = 0;
+			while (read < length) {
+				int nread = ReadShort (buffer, offset + read, length - read, fdArray);
+				if (nread == 0)
+					break;
+				read += nread;
+			}
+
+			if (read > length)
+				throw new Exception ();
+
+			return read;
 		}
 
 		readonly object writeLock = new object ();
