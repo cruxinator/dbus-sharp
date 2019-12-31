@@ -32,6 +32,9 @@ namespace DBus.Protocol
 
 		public Message CreateError (string errorName, string errorMessage)
 		{
+			if (!BusException.IsValidErrorName (errorName))
+				throw new ArgumentException (string.Format ("'{0}' is not a valid error name", errorName), "errorName");
+
 			var message = Message;
 			MessageContainer error = new MessageContainer {
 				Type = MessageType.Error,

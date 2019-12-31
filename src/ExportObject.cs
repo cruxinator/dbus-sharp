@@ -261,8 +261,16 @@ namespace DBus
 				using (System.IO.StringReader sr = new System.IO.StringReader (argException.Message)) {
 					replyMsg = method_call.CreateError ("org.freedesktop.DBus.Error.InvalidArgs", sr.ReadLine ());
 				}
-			} else
-				replyMsg = method_call.CreateError (Mapper.GetInterfaceName (raisedException.GetType ()), raisedException.Message);
+			} else {
+				string errorName = Mapper.GetInterfaceName (raisedException.GetType ());
+				string message = raisedException.Message;
+				// Make sure the error name is valid
+				if (!BusException.IsValidErrorName (errorName)) {
+					message = errorName + ": " + message;
+					errorName = "org.freedesktop.DBus.Error";
+				}
+				replyMsg = method_call.CreateError (errorName, message);
+			}
 
 			conn.Send (replyMsg);
 		}

@@ -11,6 +11,9 @@ namespace DBus
 	{
 		public BusException (string errorName, string errorMessage)
 		{
+			if (!IsValidErrorName (errorName))
+				throw new ArgumentException (string.Format ("'{0}' is not a valid error name", errorName), "errorName");
+
 			this.ErrorName = errorName;
 			this.ErrorMessage = errorMessage;
 		}
@@ -32,5 +35,15 @@ namespace DBus
 		public readonly string ErrorName;
 
 		public readonly string ErrorMessage;
+
+		internal static bool IsValidErrorName (string errorName)
+		{
+			if (errorName == null)
+				throw new ArgumentNullException ("errorName");
+
+			// https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names
+			// "Error names have the same restrictions as interface names."
+			return Mapper.IsValidInterfaceName (errorName);
+		}
 	}
 }

@@ -208,6 +208,41 @@ namespace DBus
 			Type type = defType.MakeGenericType (parms);
 			return type;
 		}
+
+		// TODO: Actually use this function to check interface names
+		internal static bool IsValidInterfaceName (string interfaceName)
+		{
+			if (interfaceName == null)
+				throw new ArgumentNullException ("interfaceName");
+
+			// https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names
+
+			// "Interface names must not exceed the maximum name length."
+			if (interfaceName.Length > ProtocolInformation.MaxNameLength)
+				return false;
+
+			// "Interface names are composed of 2 or more elements separated by a period ('.') character."
+			var parts = interfaceName.Split ('.');
+			if (parts.Length < 2)
+				return false;
+
+			foreach (var part in parts) {
+				// "All elements must contain at least one character."
+				if (part.Length == 0)
+					return false;
+				// "Each element must only contain the ASCII characters "[A-Z][a-z][0-9]_" and must not begin with a digit."
+				foreach (var c in part)
+					if (!((c >= 'A' && c <= 'Z') ||
+						  (c >= 'a' && c <= 'z') ||
+						  (c >= '0' && c <= '9') ||
+						  c == '_'))
+						return false;
+				if (part[0] >= '0' && part[0] <= '9')
+					return false;
+			}
+
+			return true;
+		}
 	}
 
 	//TODO: this class is messy, move the methods somewhere more appropriate
