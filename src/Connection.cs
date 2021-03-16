@@ -367,7 +367,10 @@ namespace DBus
                         bool handlerFound = false;
                         foreach (var rule in rules) {
 			Delegate dlg;
-			if (Handlers.TryGetValue (rule, out dlg) && dlg != null) {
+			bool found;
+			lock (Handlers)
+				found = Handlers.TryGetValue (rule, out dlg);
+			if (found && dlg != null) {
 				MethodInfo mi = dlg.GetType ().GetMethod ("Invoke");
 
 				bool compatible = false;

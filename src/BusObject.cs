@@ -73,6 +73,8 @@ namespace DBus
 				Console.Error.WriteLine ("Warning: Registering handler for signal on object without unique name ({0}), this will receive signals from all senders", bus_name);
 			}
 
+			// TODO: Should lock(conn.Handlers) be held while conn.AddMatch()/conn.RemoveMatch is called? Probably yes.
+			lock(conn.Handlers) {
 			if (adding) {
 				if (conn.Handlers.ContainsKey (rule))
 					conn.Handlers[rule] = Delegate.Combine (conn.Handlers[rule], dlg);
@@ -86,6 +88,7 @@ namespace DBus
 					conn.RemoveMatch (rule.ToString ());
 					conn.Handlers.Remove (rule);
 				}
+			}
 			}
 		}
 
