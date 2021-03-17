@@ -44,6 +44,7 @@ namespace DBus
 			ObjectType = type;
 		}
 
+		// TODO: Check locking for Methods and Properties (regarding deadlocks etc.)
 		InterfaceMethods Methods = new InterfaceMethods();
 		InterfaceProperties Properties = new InterfaceProperties();
 
@@ -64,8 +65,10 @@ namespace DBus
 		public MethodCaller GetPropertyAllCall (string iface)
 		{
 			PropertyDictionary calls;
+			lock(Properties) {
 			if (!Properties.TryGetValue(iface, out calls)) {
 				Properties [iface] = calls = new PropertyDictionary ();
+			}
 			}
 
 			if (null == calls.All) {
@@ -94,8 +97,9 @@ namespace DBus
 
 		private static V Lookup<TMap1,TMap2,A,B,V> (TMap1 map, A k1, B k2, Func<A,B,V> factory)
 			where TMap2 : IDictionary<B, V>, new()
-			where TMap1 : IDictionary<A, TMap2>
+			where TMap1 : class, IDictionary<A, TMap2>
 		{
+			lock(map) {
 			TMap2 first;
 			if (!map.TryGetValue (k1, out first)) {
 				map [k1] = first = new TMap2 ();
@@ -107,6 +111,7 @@ namespace DBus
 			}
 
 			return value;
+			}
 		}
 
 	}
