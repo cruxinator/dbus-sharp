@@ -251,8 +251,10 @@ namespace DBus
 
 		private void IssueErrorReply (MessageContainer method_call, Exception raisedException, MethodInfo mi = null)
 		{
-			if (PrintExceptions)
-				Console.Error.WriteLine ("Got exception for exported object: {0}", raisedException);
+			if (PrintExceptions) {
+				string time = DateTime.Now.ToString ("o", System.Globalization.CultureInfo.InvariantCulture);
+				Console.Error.WriteLine ("[{0}] Got exception for exported object: {1}", time, raisedException);
+			}
 
 			Message replyMsg;
 
