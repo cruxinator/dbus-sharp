@@ -95,7 +95,7 @@
   </ProjectExtensions>
   <ItemGroup>
     <Content Include="dbus-sharp.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>
