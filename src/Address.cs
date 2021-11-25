@@ -23,7 +23,7 @@ namespace DBus
 		public BadAddressException (string reason) : base (reason) {}
 	}
 
-	static class Address
+	public static class Address
 	{
 		// (unix:(path|abstract)=.*,guid=.*|tcp:host=.*(,port=.*)?);? ...
 		// or

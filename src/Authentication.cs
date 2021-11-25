@@ -15,7 +15,7 @@ namespace DBus
 
 	//using System.Runtime.InteropServices;
 	//[StructLayout (LayoutKind.Sequential)]
-	unsafe struct UUID
+	public unsafe struct UUID
 	{
 		private int a, b, c, d;
 		const int ByteLength = 16;

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace DBus
 {
-	class AddressEntry
+	public class AddressEntry
 	{
 		public string Method;
 		public readonly IDictionary<string,string> Properties = new Dictionary<string,string> ();
