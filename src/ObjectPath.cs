@@ -155,5 +155,8 @@ namespace DBus
 			return false;
 		}
 		*/
+        public static implicit operator string(ObjectPath d) => d.ToString();
+
+        public static implicit operator ObjectPath(string s) => new ObjectPath(s);
 	}
 }
